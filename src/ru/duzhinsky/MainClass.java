@@ -7,9 +7,10 @@ import ru.duzhinsky.controller.Controller;
 public class MainClass {
 
 	public static void main(String[] args) {
-		Controller controller = new Controller(model);
+		Controller controller = new Controller();
 		View view = new View(controller);
 		Model model = new Model(view);
+		controller.setModel(model);
 	}
 
 }
