@@ -1,18 +1,14 @@
 package ru.duzhinsky.view;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
-import ru.duzhinsky.controller.Controller;
 import ru.duzhinsky.model.Model;
 import ru.duzhinsky.model.Observer;
 import ru.duzhinsky.Constants;
@@ -22,6 +18,7 @@ public class View  extends JFrame implements Observer {
 	public View(Model model) {
 		super();
 		this.model = model;
+		model.addListener(this);
 		
 		/*
 		 *  Frame initialization	
@@ -53,6 +50,7 @@ public class View  extends JFrame implements Observer {
 		buttonsPanel.add(deleteButton);
 		buttonsPanel.add(clearButton);
 		buttonsPanel.add(getPathButton);
+		selectedButton = getButtonFromMode(model.getMode());
 		selectedButton.setSelected(true);
 		
 		this.setVisible(true);
@@ -61,7 +59,8 @@ public class View  extends JFrame implements Observer {
 	public void update(String what) {
 		switch(what) {
 			case "mode": {
-				
+				setSelectedToggleButton(model.getMode());
+				break;
 			}
 		}
  	}
@@ -74,11 +73,18 @@ public class View  extends JFrame implements Observer {
 	
 	public void setSelectedToggleButton(SelectedMode mode) {
 		selectedButton.setSelected(false);
-		selectedButton = getButtonForMode(mode);
+		selectedButton = getButtonFromMode(mode);
 		selectedButton.setSelected(true);
 	}
 	
-	private JToggleButton getButtonForMode(SelectedMode mode) {
+	public SelectedMode getModeFromButton(JToggleButton button) {
+		if(button == addNodeButton) return SelectedMode.addNode;
+		else if(button == makeVertexButton) return SelectedMode.makeVertex;
+		else if(button == deleteButton) return SelectedMode.deleteNode;
+		else return null;
+	}
+	
+	private JToggleButton getButtonFromMode(SelectedMode mode) {
 		switch(mode) {
 			case addNode: return addNodeButton;
 			case makeVertex: return makeVertexButton;
@@ -86,7 +92,7 @@ public class View  extends JFrame implements Observer {
 			default: return null;
 		}
 	}
-
+	
 	private JPanel treePanel    = new JPanel();
 	private JPanel buttonsPanel = new JPanel();
 	
@@ -96,7 +102,7 @@ public class View  extends JFrame implements Observer {
 	private JButton       getPathButton    = new JButton("Get Path");
 	private JButton       clearButton      = new JButton("Clear");
 	
-	private JToggleButton selectedButton = getButtonForMode(model.getMode());
+	private JToggleButton selectedButton;
 	
 	private final Model model;
 }
