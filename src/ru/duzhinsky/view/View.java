@@ -1,13 +1,21 @@
 package ru.duzhinsky.view;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
+import javax.swing.OverlayLayout;
 
 import ru.duzhinsky.model.Model;
 import ru.duzhinsky.model.Observer;
@@ -62,6 +70,18 @@ public class View  extends JFrame implements Observer {
 				setSelectedToggleButton(model.getMode());
 				break;
 			}
+			case "tree": {
+				for(Component comp : treePanel.getComponents()) {
+					treePanel.remove(comp);
+				}
+				nodes.clear();
+				for(int i = 0; i < model.getNodesCount(); ++i) {
+					nodes.add(new TreeNode(model.getNodePosition(i), i));
+					treePanel.add(nodes.get(i));
+					nodes.get(i).addMouseListener(nodeClickListener);
+				}
+				treePanel.updateUI();
+			}
 		}
  	}
 	
@@ -71,11 +91,20 @@ public class View  extends JFrame implements Observer {
 		deleteButton.addActionListener(listener);
 	}
 	
+	public void setNodeListener(MouseListener listener) {
+		this.nodeClickListener = listener;
+	}
+	
+	public void setTreePanelListener(MouseListener listener) {
+		treePanel.addMouseListener(listener);
+	}
+	
 	public void setSelectedToggleButton(SelectedMode mode) {
 		selectedButton.setSelected(false);
 		selectedButton = getButtonFromMode(mode);
 		selectedButton.setSelected(true);
 	}
+	
 	
 	public SelectedMode getModeFromButton(JToggleButton button) {
 		if(button == addNodeButton) return SelectedMode.addNode;
@@ -93,8 +122,30 @@ public class View  extends JFrame implements Observer {
 		}
 	}
 	
+	public class TreeNode extends JPanel {
+		private final int index;
+		
+		public TreeNode(Point pos, int index) {
+			setBounds(pos.x - Constants.node_size/2, pos.y - Constants.node_size/2,
+					Constants.node_size, Constants.node_size);
+			this.index = index;
+        }
+		
+		public int getIndex() { return index; }
+
+        @Override
+        public void paintComponent(Graphics g) {
+        	g.setColor(Constants.nodeFillColor);
+        	g.fillOval(0, 0, Constants.node_size-1, Constants.node_size-1);
+        	g.setColor(Constants.nodeBorderColor);
+        	g.drawOval(0, 0, Constants.node_size-1, Constants.node_size-1);
+        }
+	}
+	
 	private JPanel treePanel    = new JPanel();
 	private JPanel buttonsPanel = new JPanel();
+	private ArrayList<TreeNode> nodes = new ArrayList<>();
+	private MouseListener nodeClickListener;
 	
 	private JToggleButton makeVertexButton = new JToggleButton("Make Vertex");
 	private JToggleButton addNodeButton    = new JToggleButton("Add Node");

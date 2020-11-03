@@ -1,5 +1,6 @@
 package ru.duzhinsky.model;
 
+import java.awt.Point;
 import java.util.ArrayList;
 
 import ru.duzhinsky.model.tree.Tree;
@@ -30,8 +31,29 @@ public class Model {
 		return mode;
 	}
 	
+	public void addNode(int x, int y) {
+		tree.addNode();
+		nodesPositions.add(new Point(x, y));
+		notifyUpdate("tree");
+	}
+	
+	public void deleteNode(int index) {
+		tree.deleteNode(index);
+		nodesPositions.remove(index);
+		notifyUpdate("tree");
+	}
+	
+	public int getNodesCount() {
+		return tree.tree.size();
+	}
+	
+	public Point getNodePosition(int index) {
+		return nodesPositions.get(index);
+	}
+	
 	
 	private Tree tree = new Tree();
+	private ArrayList<Point> nodesPositions = new ArrayList<>();
 	private SelectedMode mode = SelectedMode.addNode;
 	
 }

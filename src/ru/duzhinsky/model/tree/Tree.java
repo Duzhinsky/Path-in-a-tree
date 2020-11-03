@@ -24,6 +24,14 @@ public class Tree {
 		return true;
 	}
 	
+	public void deleteNode(int index) {
+		tree.remove(index);
+		for(Node n : tree) {
+			for(int child : n.childs)
+				n.childs.remove(child);
+		}
+	}
+	
 	private boolean hasCycle() {
 		int[] entriesCount = new int[ tree.size() ];
 		Stack<Integer> dfs_stack = new Stack<>();
