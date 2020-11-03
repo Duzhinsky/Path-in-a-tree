@@ -2,8 +2,8 @@ package ru.duzhinsky.model;
 
 import java.util.ArrayList;
 
+import ru.duzhinsky.model.tree.Tree;
 import ru.duzhinsky.view.SelectedMode;
-import ru.duzhinsky.view.View;
 
 public class Model {
 	private ArrayList<Observer> listeners = new ArrayList<>();
@@ -30,6 +30,8 @@ public class Model {
 		return mode;
 	}
 	
+	
+	private Tree tree = new Tree();
 	private SelectedMode mode = SelectedMode.addNode;
 	
 }
