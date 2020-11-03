@@ -1,7 +1,6 @@
 package ru.duzhinsky.model.tree;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 public class Tree {
 	public ArrayList<Node> tree = new ArrayList<>();
@@ -18,7 +17,7 @@ public class Tree {
 		if(rhs > tree.size() || lhs > tree.size()) return false;
 		tree.get(lhs).childs.add(rhs);
 		tree.get(rhs).childs.add(lhs);
-		if(hasCycle()) {
+		if(hasCycle(lhs)) {
 			tree.get(lhs).childs.remove( tree.get(lhs).childs.size()-1 );
 			tree.get(rhs).childs.remove( tree.get(rhs).childs.size()-1 );
 			return false;
@@ -34,21 +33,22 @@ public class Tree {
 		}
 	}
 	
-	private boolean hasCycle() {
+	private boolean hasCycle(int rootVertex) {
 		int[] entriesCount = new int[ tree.size() ];
-		Stack<Integer> dfs_stack = new Stack<>();
-		dfs_stack.push(0);
-		while(!dfs_stack.empty()) {
-			int node = dfs_stack.pop();
-			++entriesCount[node];
-			for(int child_node : tree.get(node).childs) {
-				if(entriesCount[child_node] != 0) return true;
-				else {
-					dfs_stack.push(child_node);
-				}
+		return hasCycleDFS(rootVertex, entriesCount, -1);
+	}
+	
+	private boolean hasCycleDFS(int vertex, int[] entriesCount, int parent) {
+		entriesCount[vertex] = 1;
+		for(int child : tree.get(vertex).childs) {
+			if(child == parent) continue;
+			if(entriesCount[child] == 0) {
+				if(hasCycleDFS(child, entriesCount, vertex)) return true;
+			} else if(entriesCount[child] == 1) {
+				return true;
 			}
-			++entriesCount[node];
 		}
+		entriesCount[vertex] = 2;
 		return false;
 	}
 }
