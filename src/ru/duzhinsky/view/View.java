@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -12,14 +13,15 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 import ru.duzhinsky.controller.Controller;
+import ru.duzhinsky.model.Model;
+import ru.duzhinsky.model.Observer;
 import ru.duzhinsky.Constants;
 
-public class View  extends JFrame {
+public class View  extends JFrame implements Observer {
 	
-	public View(Controller controller) {
+	public View(Model model) {
 		super();
-		this.controller = controller;
-		
+		this.model = model;
 		
 		/*
 		 *  Frame initialization	
@@ -56,10 +58,25 @@ public class View  extends JFrame {
 		this.setVisible(true);
 	}
 	
-	public void update(Object what) {
-		System.out.println("auf");
+	public void update(String what) {
+		switch(what) {
+			case "mode": {
+				
+			}
+		}
  	}
 	
+	public void setButtonActionListener(ActionListener listener) {
+		addNodeButton.addActionListener(listener);
+		makeVertexButton.addActionListener(listener);
+		deleteButton.addActionListener(listener);
+	}
+	
+	public void setSelectedToggleButton(SelectedMode mode) {
+		selectedButton.setSelected(false);
+		selectedButton = getButtonForMode(mode);
+		selectedButton.setSelected(true);
+	}
 	
 	private JToggleButton getButtonForMode(SelectedMode mode) {
 		switch(mode) {
@@ -73,15 +90,13 @@ public class View  extends JFrame {
 	private JPanel treePanel    = new JPanel();
 	private JPanel buttonsPanel = new JPanel();
 	
-	private SelectedMode mode = SelectedMode.addNode;
-	
 	private JToggleButton makeVertexButton = new JToggleButton("Make Vertex");
 	private JToggleButton addNodeButton    = new JToggleButton("Add Node");
 	private JToggleButton deleteButton     = new JToggleButton("Delete");
 	private JButton       getPathButton    = new JButton("Get Path");
 	private JButton       clearButton      = new JButton("Clear");
 	
-	private JToggleButton selectedButton = getButtonForMode(mode);
+	private JToggleButton selectedButton = getButtonForMode(model.getMode());
 	
-	private Controller controller;
+	private final Model model;
 }
