@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import ru.duzhinsky.model.tree.Tree;
-import ru.duzhinsky.view.SelectedMode;
 
 public class Model {
 	private ArrayList<Observer> listeners = new ArrayList<>();
@@ -49,6 +48,20 @@ public class Model {
 	
 	public Point getNodePosition(int index) {
 		return nodesPositions.get(index);
+	}
+	
+	public boolean addVertex(int index1, int index2) {
+		boolean res = tree.addVertex(index1, index2);
+		if(res) notifyUpdate("tree");
+		return res;
+	}
+	
+	public ArrayList<int[]> getVertexes() {
+		ArrayList<int[]> list = new ArrayList<>();
+		for(int i = 0; i < tree.tree.size(); ++i)
+			for(int child : tree.tree.get(i).childs)
+				list.add(new int[] {i, child});
+		return list;
 	}
 	
 	

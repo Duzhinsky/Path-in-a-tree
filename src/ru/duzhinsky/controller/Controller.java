@@ -8,7 +8,7 @@ import java.awt.event.MouseListener;
 import javax.swing.JToggleButton;
 
 import ru.duzhinsky.model.Model;
-import ru.duzhinsky.view.SelectedMode;
+import ru.duzhinsky.model.SelectedMode;
 import ru.duzhinsky.view.View;
 import ru.duzhinsky.view.View.TreeNode;
 
@@ -29,6 +29,8 @@ public class Controller {
 			SelectedMode mode = view.getModeFromButton( (JToggleButton)e.getSource() );
 			if(mode != null)
 				model.setMode(mode); 
+			if(mode == SelectedMode.makeVertex)
+				nodesSelectRequired = 2;
 		}
 	}
 	
@@ -47,8 +49,20 @@ public class Controller {
 	private class NodeClickListener implements MouseListener {
 		@Override
 		public void mouseClicked(MouseEvent e) {
+			--nodesSelectRequired;
+			int index = ((TreeNode)e.getSource()).getIndex();
+			for(int i = nodeClickBufferSize-1; i > 0; --i)
+				nodeClickBuffer[i] = nodeClickBuffer[i-1];
+			nodeClickBuffer[0] = index;
+			
 			if(model.getMode() == SelectedMode.deleteNode) 
-				model.deleteNode( ((TreeNode)e.getSource()).getIndex() );
+				model.deleteNode(index);
+			
+			if(nodesSelectRequired <= 0 && model.getMode() == SelectedMode.makeVertex) {
+				nodesSelectRequired = 2;
+				if(nodeClickBuffer[1] != nodeClickBuffer[0])
+					model.addVertex(nodeClickBuffer[1], nodeClickBuffer[0]);
+			}
 		}
 		public void mouseEntered(MouseEvent e) {}
 		public void mouseExited(MouseEvent e) {}
@@ -56,6 +70,10 @@ public class Controller {
 		public void mouseReleased(MouseEvent e) {}
 	}
 
+	
+	private final int nodeClickBufferSize = 2;
+	private int[] nodeClickBuffer = new int[nodeClickBufferSize];
+	private int nodesSelectRequired = 0;
 	
 	private final Model model;
 	private final View view;

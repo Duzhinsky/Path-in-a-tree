@@ -1,4 +1,4 @@
-package ru.duzhinsky.view;
+package ru.duzhinsky.model;
 
 public enum SelectedMode {
 	addNode,

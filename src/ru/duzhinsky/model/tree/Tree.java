@@ -17,8 +17,10 @@ public class Tree {
 	public boolean addVertex(int lhs, int rhs) {
 		if(rhs > tree.size() || lhs > tree.size()) return false;
 		tree.get(lhs).childs.add(rhs);
+		tree.get(rhs).childs.add(lhs);
 		if(hasCycle()) {
-			tree.remove(tree.size()-1);
+			tree.get(lhs).childs.remove( tree.get(lhs).childs.size()-1 );
+			tree.get(rhs).childs.remove( tree.get(rhs).childs.size()-1 );
 			return false;
 		}
 		return true;
