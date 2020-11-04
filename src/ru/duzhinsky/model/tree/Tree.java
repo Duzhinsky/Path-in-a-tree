@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Tree {
 	public ArrayList<Node> tree = new ArrayList<>();
+	private ArrayList<Node> path_parent = new ArrayList<>();
 	
 	public Tree() {
 		
@@ -22,6 +23,7 @@ public class Tree {
 			tree.get(rhs).childs.remove( tree.get(rhs).childs.size()-1 );
 			return false;
 		}
+		
 		return true;
 	}
 	
@@ -50,5 +52,9 @@ public class Tree {
 		}
 		entriesCount[vertex] = 2;
 		return false;
+	}
+	
+	public ArrayList<Node> getPath(int from, int to) {
+		return new ArrayList<Node>();
 	}
 }

@@ -13,7 +13,8 @@ public final class Constants {
 	public static final int    nodeSize = 15;
 	public static final float  vertexArrowSize = nodeSize + 5;
 	
-	public static final Color  arrowColor = new Color(80, 80, 80);
+	public static final Color  vertexColor = new Color(80, 80, 80);
 	public static final Color  nodeFillColor = new Color(240, 240, 240);
+	public static final Color  nodeFillColorSelected = new Color(170, 170, 170);
 	public static final Color  nodeBorderColor = new Color(100, 100, 100);
 }

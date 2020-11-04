@@ -29,27 +29,26 @@ public class Controller {
 			SelectedMode mode = view.getModeFromButton( (JToggleButton)e.getSource() );
 			if(mode != null)
 				model.setMode(mode); 
-			if(mode == SelectedMode.makeVertex)
-				nodesSelectRequired = 2;
+			if(mode == SelectedMode.makeVertex || mode == SelectedMode.getPath)
+				requireNodesSelection(2);
 		}
 	}
 	
 	private class TreePanelClickListener implements MouseListener {
 		@Override
-		public void mouseClicked(MouseEvent e) {
+		public void mousePressed(MouseEvent e) {
 			if(model.getMode() == SelectedMode.addNode) 
-					model.addNode(e.getX(), e.getY());
+				model.addNode(e.getX(), e.getY());
 		}
+		public void mouseClicked(MouseEvent e) {}
 		public void mouseEntered(MouseEvent e) {}
 		public void mouseExited(MouseEvent e) {}
-		public void mousePressed(MouseEvent e) {}
 		public void mouseReleased(MouseEvent e) {}
 	}
 	
 	private class NodeClickListener implements MouseListener {
 		@Override
-		public void mouseClicked(MouseEvent e) {
-			--nodesSelectRequired;
+		public void mousePressed(MouseEvent e) {
 			int index = ((TreeNode)e.getSource()).getIndex();
 			for(int i = nodeClickBufferSize-1; i > 0; --i)
 				nodeClickBuffer[i] = nodeClickBuffer[i-1];
@@ -58,16 +57,36 @@ public class Controller {
 			if(model.getMode() == SelectedMode.deleteNode) 
 				model.deleteNode(index);
 			
-			if(nodesSelectRequired <= 0 && model.getMode() == SelectedMode.makeVertex) {
-				nodesSelectRequired = 2;
+			if(nodesSelectRequired > 0) {
+				model.clearNodesSelection();
+				for(int i = 0; i < nodesSelectRequired; ++i)
+					if(nodeClickBuffer[i] != -1)
+						model.setNodeSelected(nodeClickBuffer[i], true);
+				--nodesSelectRequired;
+			}
+			
+			if(nodesSelectRequired == 0 && model.getMode() == SelectedMode.makeVertex) {
 				if(nodeClickBuffer[1] != nodeClickBuffer[0])
 					model.addVertex(nodeClickBuffer[1], nodeClickBuffer[0]);
+				requireNodesSelection(2);
+			}
+			
+			if(nodesSelectRequired == 0 && model.getMode() == SelectedMode.getPath) {
+				if(nodeClickBuffer[1] != nodeClickBuffer[0])
+					model.getPath(nodeClickBuffer[1], nodeClickBuffer[0]);
+				requireNodesSelection(2);
 			}
 		}
 		public void mouseEntered(MouseEvent e) {}
 		public void mouseExited(MouseEvent e) {}
-		public void mousePressed(MouseEvent e) {}
+		public void mouseClicked(MouseEvent e) {}
 		public void mouseReleased(MouseEvent e) {}
+	}
+	
+	private void requireNodesSelection(int count) {
+		for(int i = 0; i < nodeClickBufferSize; ++i)
+			nodeClickBuffer[i] = -1;
+		nodesSelectRequired = count;
 	}
 
 	

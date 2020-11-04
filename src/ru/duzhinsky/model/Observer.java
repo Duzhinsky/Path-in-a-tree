@@ -1,5 +1,5 @@
 package ru.duzhinsky.model;
 
-public interface Observer {
-	void update(String what);
+public interface Observer { 
+	void update(String what, Object... params);
 }

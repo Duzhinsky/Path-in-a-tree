@@ -62,13 +62,12 @@ public class View  extends JFrame implements Observer {
 		this.setVisible(true);
 	}
 	
-	public void update(String what) {
+	public void update(String what, Object... params) {
 		switch(what) {
-			case "mode": {
+			case "mode": 
 				setSelectedToggleButton(model.getMode());
 				break;
-			}
-			case "tree": {
+			case "tree": 
 				for(Component comp : treePanel.getComponents()) {
 					treePanel.remove(comp);
 				}
@@ -83,7 +82,11 @@ public class View  extends JFrame implements Observer {
 					nodes.get(i).addMouseListener(nodeClickListener);
 				}
 				treePanel.repaint();
-			}
+				break;
+			case "node_selection":
+				nodes.get((int)params[0]).setSelected(model.isNodeSelected((int)params[0]));
+				nodes.get((int)params[0]).repaint();
+				break;
 		}
  	}
 	
@@ -91,6 +94,7 @@ public class View  extends JFrame implements Observer {
 		addNodeButton.addActionListener(listener);
 		makeVertexButton.addActionListener(listener);
 		deleteButton.addActionListener(listener);
+		getPathButton.addActionListener(listener);
 	}
 	
 	public void setNodeListener(MouseListener listener) {
@@ -112,6 +116,7 @@ public class View  extends JFrame implements Observer {
 		if(button == addNodeButton) return SelectedMode.addNode;
 		else if(button == makeVertexButton) return SelectedMode.makeVertex;
 		else if(button == deleteButton) return SelectedMode.deleteNode;
+		else if(button == getPathButton) return SelectedMode.getPath;
 		else return null;
 	}
 	
@@ -120,12 +125,14 @@ public class View  extends JFrame implements Observer {
 			case addNode: return addNodeButton;
 			case makeVertex: return makeVertexButton;
 			case deleteNode: return deleteButton;
+			case getPath: return getPathButton;
 			default: return null;
 		}
 	}
 	
 	public class TreeNode extends JPanel {
 		private final int index;
+		private boolean selected = false;
 		
 		public TreeNode(Point pos, int index) {
 			setBounds(pos.x - Constants.nodeSize/2, pos.y - Constants.nodeSize/2,
@@ -134,10 +141,12 @@ public class View  extends JFrame implements Observer {
         }
 		
 		public int getIndex() { return index; }
-
+		public void setSelected(boolean selected) { this.selected = selected; }
+		
         @Override
         public void paintComponent(Graphics g) {
-        	g.setColor(Constants.nodeFillColor);
+        	if(selected) g.setColor(Constants.nodeFillColorSelected);
+        	else g.setColor(Constants.nodeFillColor);
         	g.fillOval(0, 0, Constants.nodeSize-1, Constants.nodeSize-1);
         	g.setColor(Constants.nodeBorderColor);
         	g.drawOval(0, 0, Constants.nodeSize-1, Constants.nodeSize-1);
@@ -148,7 +157,7 @@ public class View  extends JFrame implements Observer {
 		@Override 
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			g.setColor(Constants.arrowColor);
+			g.setColor(Constants.vertexColor);
 			for(VertexLine line : vertexes)
 				g.drawLine(line.start.x, line.start.y, line.end.x, line.end.y);
 		}
@@ -179,7 +188,7 @@ public class View  extends JFrame implements Observer {
 	private JToggleButton makeVertexButton = new JToggleButton("Make Vertex");
 	private JToggleButton addNodeButton    = new JToggleButton("Add Node");
 	private JToggleButton deleteButton     = new JToggleButton("Delete");
-	private JButton       getPathButton    = new JButton("Get Path");
+	private JToggleButton getPathButton    = new JToggleButton("Get Path");
 	private JButton       clearButton      = new JButton("Clear");
 	
 	private JToggleButton selectedButton;
